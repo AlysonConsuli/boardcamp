@@ -14,3 +14,12 @@ export const getCustomers = async (req, res) => {
         res.sendStatus(500)
     }
 }
+
+export const getCustomer = async (req, res) => {
+    const { customer } = res.locals
+    try {
+        res.send(customer)
+    } catch {
+        res.sendStatus(500)
+    }
+}
