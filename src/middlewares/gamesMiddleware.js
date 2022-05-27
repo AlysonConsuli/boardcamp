@@ -8,8 +8,8 @@ export const gamesMiddleware = async (req, res, next) => {
         return res.sendStatus(400)
     }
     try {
-        const categorieNumber = await db.query('SELECT id FROM categories WHERE id = $1', [categoryId])
-        if (!categorieNumber) {
+        const categoryNumber = await db.query('SELECT id FROM categories WHERE id = $1', [categoryId])
+        if (!categoryNumber) {
             return res.sendStatus(400)
         }
         const conflictName = await db.query('SELECT name FROM games WHERE name = $1', [name])

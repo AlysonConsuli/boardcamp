@@ -9,10 +9,10 @@ export const getCategories = async (req, res) => {
     }
 }
 
-export const postCategorie = async (req, res) => {
+export const postCategory = async (req, res) => {
     const { name } = req.body
     try {
-        const categorie = await db.query('INSERT INTO categories (name) VALUES ($1)', [name])
+        const category = await db.query('INSERT INTO categories (name) VALUES ($1)', [name])
         res.sendStatus(201)
     } catch {
         res.sendStatus(500)
