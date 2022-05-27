@@ -8,3 +8,13 @@ export const getCategories = async (req, res) => {
         res.sendStatus(500)
     }
 }
+
+export const postCategorie = async (req, res) => {
+    const { name } = req.body
+    try {
+        const categorie = await db.query('INSERT INTO categories (name) VALUES ($1)', [name])
+        res.sendStatus(201)
+    } catch {
+        res.sendStatus(500)
+    }
+}
