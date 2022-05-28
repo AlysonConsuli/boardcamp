@@ -11,31 +11,31 @@ export const getRentals = async (req, res) => {
         JOIN games ON rentals."gameId" = games.id
         JOIN categories ON games."categoryId" = categories.id`)
         let rentalsResult = []
-        for (let rental of rentals.rows) {
+        for (let rent of rentals.rows) {
             const { id, rentDate, daysRented, returnDate, originalPrice, delayFee,
-                customerName, gameName, categoryId, categoryName } = rental
+                customerName, gameName, categoryId, categoryName } = rent
             rentalsResult.push({
-                id, customerId: rental.customerId, gameId: rental.gameId,
+                id, customerId: rent.customerId, gameId: rent.gameId,
                 rentDate, daysRented, returnDate, originalPrice, delayFee,
-                customer: { id: rental.customerId, name: customerName },
-                game: { id: rental.gameId, name: gameName, categoryId, categoryName }
+                customer: { id: rent.customerId, name: customerName },
+                game: { id: rent.gameId, name: gameName, categoryId, categoryName }
             })
         }
         if (customerId && gameId) {
-            const rentalsGameAndCustomer = rentalsResult.filter(rental => {
-                return (rental.customerId === Number(customerId) && rental.gameId === Number(gameId))
+            const rentalsGameAndCustomer = rentalsResult.filter(rent => {
+                return (rent.customerId === Number(customerId) && rent.gameId === Number(gameId))
             })
             return res.send(rentalsGameAndCustomer)
         }
         if (customerId) {
-            const rentalsCustomer = rentalsResult.filter(rental => {
-                return (rental.customerId === Number(customerId))
+            const rentalsCustomer = rentalsResult.filter(rent => {
+                return (rent.customerId === Number(customerId))
             })
             return res.send(rentalsCustomer)
         }
         if (gameId) {
-            const rentalsGame = rentalsResult.filter(rental => {
-                return (rental.gameId === Number(gameId))
+            const rentalsGame = rentalsResult.filter(rent => {
+                return (rent.gameId === Number(gameId))
             })
             return res.send(rentalsGame)
         }
