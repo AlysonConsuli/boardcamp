@@ -44,3 +44,28 @@ export const getRentals = async (req, res) => {
         res.sendStatus(500)
     }
 }
+
+export const postRent = async (req, res) => {
+    const { customerId, gameId, daysRented } = req.body
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+    const rentDate = `${year}-${month}-${date}`
+    try {
+        const pricePerDay = await db.query(`
+        SELECT "pricePerDay" FROM games
+        WHERE id = $1`, [gameId])
+        const price = pricePerDay.rows[0].pricePerDay
+        const originalPrice = daysRented * price
+        const rent = await db.query(`
+        INSERT INTO rentals ("customerId", "gameId", "daysRented", "rentDate", 
+        "originalPrice", "returnDate", "delayFee") 
+        VALUES ($1, $2, $3, $4, $5, null, null)`,
+            [customerId, gameId, daysRented, rentDate, originalPrice]
+        )
+        res.sendStatus(201)
+    } catch {
+        res.sendStatus(500)
+    }
+}
