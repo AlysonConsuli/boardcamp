@@ -20,7 +20,7 @@ export const rentalsMiddleware = async (req, res, next) => {
         SELECT rentals.id, games."stockTotal" FROM rentals
         JOIN games ON games.id = $1
         WHERE rentals."gameId" = $1`, [gameId])
-        if (rentals.rows[0].stockTotal <= rentals.rows.length) {
+        if (rentals.rows[0]?.stockTotal <= rentals.rows?.length) {
             return res.sendStatus(400)
         }
         next()
