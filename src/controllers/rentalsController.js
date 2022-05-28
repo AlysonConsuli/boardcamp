@@ -9,17 +9,17 @@ export const getRentals = async (req, res) => {
         JOIN customers ON rentals."customerId" = customers.id
         JOIN games ON rentals."gameId" = games.id
         JOIN categories ON games."categoryId" = categories.id`)
-        let result = []
+        let rentalsResult = []
         for (let rental of rentals.rows) {
             const { id, customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee,
                 customerName, gameName, categoryId, categoryName } = rental
-            result.push({
+            rentalsResult.push({
                 id, customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee,
-                customer: { customerId, name: customerName },
-                game: { gameId, name: gameName, categoryId, categoryName }
+                customer: { id: customerId, name: customerName },
+                game: { id: gameId, name: gameName, categoryId, categoryName }
             })
         }
-        res.send(result)
+        res.send(rentalsResult)
     } catch {
         res.sendStatus(500)
     }
