@@ -97,3 +97,13 @@ export const postReturnRent = async (req, res) => {
         res.sendStatus(500)
     }
 }
+
+export const deleteRent = async (req, res) => {
+    const { id } = req.params
+    try {
+        await db.query(`DELETE FROM rentals WHERE id = $1`, [id])
+        res.sendStatus(200)
+    } catch {
+        res.sendStatus(500)
+    }
+}
