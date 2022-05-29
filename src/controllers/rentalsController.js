@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import db from "../db.js";
 
 export const getRentals = async (req, res) => {
@@ -65,6 +67,32 @@ export const postRent = async (req, res) => {
             [customerId, gameId, daysRented, rentDate, originalPrice]
         )
         res.sendStatus(201)
+    } catch {
+        res.sendStatus(500)
+    }
+}
+
+export const postReturnRent = async (req, res) => {
+    const { id } = req.params
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+    const returnDate = `${year}-${month}-${date}`
+    const dateNow = moment().format('YYYY-MM-DD')
+    try {
+        const rentDate = await db.query(`
+        SELECT rentals."rentDate", games."pricePerDay" FROM rentals 
+        JOIN games ON games.id = rentals."gameId"
+        WHERE rentals.id = $1`, [id])
+        const pastDate = moment(rentDate.rows[0].rentDate).format('YYYY-MM-DD')
+        const diff = moment(dateNow).diff(moment(pastDate))
+        const daysLate = moment.duration(diff).asDays()
+        const delayFee = daysLate * rentDate.rows[0].pricePerDay
+        const rent = await db.query(`
+        UPDATE rentals SET "returnDate" = '${returnDate}', "delayFee" = ${delayFee} 
+        WHERE id = $1`, [id])
+        res.sendStatus(200)
     } catch {
         res.sendStatus(500)
     }

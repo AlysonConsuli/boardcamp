@@ -28,3 +28,16 @@ export const rentalsMiddleware = async (req, res, next) => {
         res.sendStatus(500);
     }
 }
+
+export const returnRentMiddleware = async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const rent = await db.query('SELECT id, "returnDate" FROM rentals WHERE id = $1', [id])
+        if (!rent.rows[0]?.id || rent.rows[0]?.returnDate) {
+            return res.sendStatus(400)
+        }
+        next()
+    } catch {
+        res.sendStatus(500);
+    }
+}
