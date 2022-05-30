@@ -80,17 +80,20 @@ export const postReturnRent = async (req, res) => {
     let year = date_ob.getFullYear();
     const returnDate = `${year}-${month}-${date}`
     const dateNow = moment().format('YYYY-MM-DD')
+    //const returnDate = moment().add(3, 'days').format('YYYY-MM-DD')
+    //const dateNow = moment().add(3, 'days').format('YYYY-MM-DD')
     try {
         const rentDate = await db.query(`
-        SELECT rentals."rentDate", games."pricePerDay" FROM rentals 
+        SELECT rentals."rentDate", rentals."daysRented", games."pricePerDay" FROM rentals 
         JOIN games ON games.id = rentals."gameId"
         WHERE rentals.id = $1`, [id])
         const pastDate = moment(rentDate.rows[0].rentDate).format('YYYY-MM-DD')
         const diff = moment(dateNow).diff(moment(pastDate))
         const daysLate = moment.duration(diff).asDays()
-        const delayFee = daysLate * rentDate.rows[0].pricePerDay
+        const delayFee = (daysLate - rentDate.rows[0].daysRented) * rentDate.rows[0].pricePerDay
         const rent = await db.query(`
-        UPDATE rentals SET "returnDate" = '${returnDate}', "delayFee" = ${delayFee} 
+        UPDATE rentals SET "returnDate" = '${returnDate}', 
+        "delayFee" = ${delayFee > 0 ? delayFee : 0} 
         WHERE id = $1`, [id])
         res.sendStatus(200)
     } catch {

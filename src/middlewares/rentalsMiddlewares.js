@@ -19,7 +19,7 @@ export const rentalsMiddleware = async (req, res, next) => {
         const rentals = await db.query(`
         SELECT rentals.id, games."stockTotal" FROM rentals
         JOIN games ON games.id = $1
-        WHERE rentals."gameId" = $1`, [gameId])
+        WHERE rentals."gameId" = $1 AND rentals."returnDate" IS NULL`, [gameId])
         if (rentals.rows[0]?.stockTotal <= rentals.rows?.length) {
             return res.sendStatus(400)
         }
